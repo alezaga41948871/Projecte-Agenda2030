@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestió d'Aliments</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Nunito', sans-serif; background: #f0f4f8; color: #1a2332; min-height: 100vh; }
+
+.hero {
+  background: linear-gradient(135deg, #1a3a2a 0%, #2d5a3d 100%);
+  padding: 40px 20px 50px;
+  text-align: center;
+}
+.hero-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  color: #a8e6c0;
+  font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+  padding: 5px 14px; border-radius: 20px; margin-bottom: 16px;
+}
+.hero h1 { color: #fff; font-size: clamp(1.6rem, 4vw, 2.6rem); font-weight: 900; margin-bottom: 8px; }
+.hero h1 span { color: #7ec8a0; }
+.hero p { color: #a8c4b0; font-size: 0.95rem; }
+
+.container { max-width: 700px; margin: 0 auto; padding: 28px 20px 60px; }
+
+/* FORM */
+.form-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 28px 32px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+  margin-bottom: 24px;
+}
+.form-card h2 { font-size: 1.15rem; font-weight: 800; margin-bottom: 20px; color: #1a3a2a; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: end; }
+@media(max-width: 520px) { .form-row { grid-template-columns: 1fr; } }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 12px; font-weight: 800; color: #2d5a3d; text-transform: uppercase; letter-spacing: .5px; }
+.field input {
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  outline: none;
+  transition: border .2s;
+}
+.field input:focus { border-color: #4a8c5c; }
+
+.btn-add {
+  background: #2d5a3d;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 22px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .2s, transform .15s;
+}
+.btn-add:hover { background: #1a3a2a; transform: translateY(-1px); }
+
+/* STATS */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+@media(max-width: 480px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+.stat-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 1px 10px rgba(0,0,0,0.06);
+}
+.stat-num { font-size: 2rem; font-weight: 900; line-height: 1; }
+.stat-label { font-size: 11px; color: #888; font-weight: 700; margin-top: 4px; text-transform: uppercase; }
+
+/* LLISTA */
+.list-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 14px;
+}
+.list-header h2 { font-size: 1.1rem; font-weight: 800; }
+.btn-clear {
+  background: transparent; border: 1.5px solid #e2e8f0; color: #888;
+  border-radius: 8px; padding: 6px 14px;
+  font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: all .2s;
+}
+.btn-clear:hover { border-color: #e53935; color: #e53935; }
+
+.aliment-item {
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  border-left: 5px solid #ccc;
+  animation: slideIn .25s ease;
+  transition: transform .15s;
+}
+.aliment-item:hover { transform: translateX(3px); }
+@keyframes slideIn { from { opacity:0; transform:translateX(-10px); } to { opacity:1; transform:translateX(0); } }
+
+.aliment-item.ok      { border-left-color: #22c55e; }
+.aliment-item.avis    { border-left-color: #f59e0b; }
+.aliment-item.critic  { border-left-color: #ef4444; }
+.aliment-item.caducat { border-left-color: #9ca3af; opacity: .7; }
+
+.a-emoji { font-size: 26px; flex-shrink: 0; }
+.a-info { flex: 1; }
+.a-nom { font-weight: 800; font-size: 15px; }
+.a-data { font-size: 12px; color: #888; margin-top: 2px; }
+
+.a-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px; font-weight: 800;
+  color: #fff; white-space: nowrap; flex-shrink: 0;
+}
+.ok .a-badge      { background: #22c55e; }
+.avis .a-badge    { background: #f59e0b; }
+.critic .a-badge  { background: #ef4444; }
+.caducat .a-badge { background: #9ca3af; }
+
+.a-delete {
+  background: none; border: none; cursor: pointer;
+  font-size: 18px; opacity: .4; transition: opacity .2s;
+  flex-shrink: 0; padding: 4px;
+}
+.a-delete:hover { opacity: 1; }
+
+.empty-state {
+  text-align: center; padding: 48px 20px;
+  background: #fff; border-radius: 18px;
+  box-shadow: 0 1px 10px rgba(0,0,0,0.06);
+}
+.empty-state .icon { font-size: 3.5rem; margin-bottom: 14px; }
+.empty-state h3 { font-weight: 800; margin-bottom: 6px; }
+.empty-state p { color: #888; font-size: 14px; }
+
+.ods-note {
+  background: linear-gradient(135deg, #1a3a2a, #2d5a3d);
+  color: #a8e6c0;
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-top: 24px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.ods-note strong { color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">ODS 12 — Consum Responsable</div>
+  <h1>🥦 Gestió d'<span>Aliments</span></h1>
+  <p>Controla les caducitats i redueix el malbaratament alimentari</p>
+</div>
+
+<div class="container">
+
+  <!-- FORMULARI -->
+  <div class="form-card">
+    <h2>➕ Afegir un aliment</h2>
+    <div class="form-row">
+      <div class="field">
+        <label>Nom de l'aliment</label>
+        <input type="text" id="nom" placeholder="Ex: Llet, Iogurt, Pa..." autocomplete="off">
+      </div>
+      <div class="field">
+        <label>Data de caducitat</label>
+        <input type="date" id="data">
+      </div>
+      <button class="btn-add" onclick="afegirAliment()">Afegir ✓</button>
+    </div>
+    <div id="error-msg" style="color:#ef4444; font-size:13px; margin-top:10px; display:none;"></div>
+  </div>
+
+  <!-- ESTADÍSTIQUES -->
+  <div class="stats" id="stats"></div>
+
+  <!-- LLISTA -->
+  <div class="list-header">
+    <h2>📋 Els meus aliments</h2>
+    <button class="btn-clear" onclick="netejarCaducats()">🗑️ Eliminar caducats</button>
+  </div>
+  <div id="llista"></div>
+
+  <!-- NOTA ODS -->
+  <div class="ods-note">
+    <strong>💡 Sabies que...</strong> A Espanya es llencen més de 1.300 milions de kg d'aliments cada any.
+    Consumir primer el que caduca abans és una de les accions més efectives per reduir el malbaratament alimentari i contribuir a l'<strong>ODS 12</strong> de l'Agenda 2030.
+  </div>
+
+</div>
+
+<script>
+// ── EMOJIS PER CATEGORIA ──
+const emojis = {
+  llet: '🥛', iogurt: '🫙', pa: '🍞', ou: '🥚', carn: '🥩', peix: '🐟',
+  pollastre: '🍗', formatge: '🧀', fruita: '🍎', verdura: '🥕', tomàquet: '🍅',
+  patata: '🥔', pastanaga: '🥕', enciam: '🥬', taronja: '🍊', plàtan: '🍌',
+  maduixa: '🍓', préssec: '🍑', raïm: '🍇', pera: '🍐', llimona: '🍋',
+  suc: '🧃', refresc: '🥤', cervesa: '🍺', vi: '🍷', mantequilla: '🧈',
+  nata: '🫙', xocolata: '🍫', gelat: '🍦', pastís: '🎂', flam: '🍮',
+};
+function getEmoji(nom) {
+  const n = nom.toLowerCase();
+  for (const [k, v] of Object.entries(emojis)) { if (n.includes(k)) return v; }
+  return '🥫';
+}
+
+// ── LÒGICA DE DIES ──
+function calcularDies(dataCaducitat) {
+  const avui = new Date();
+  avui.setHours(0, 0, 0, 0);
+  const caducitat = new Date(dataCaducitat);
+  return Math.ceil((caducitat - avui) / (1000 * 60 * 60 * 24));
+}
+
+function obtenirEstat(dies) {
+  if (dies < 0)  return { classe: 'caducat', text: 'Caducat!',        emoji: '⚫' };
+  if (dies === 0) return { classe: 'critic',  text: 'Caduca avui!',   emoji: '🔴' };
+  if (dies <= 3) return { classe: 'critic',  text: dies + ' dies',    emoji: '🔴' };
+  if (dies <= 7) return { classe: 'avis',    text: dies + ' dies',    emoji: '🟠' };
+  return               { classe: 'ok',      text: dies + ' dies',    emoji: '🟢' };
+}
+
+// ── localStorage ──
+function guardarDades(aliments) {
+  localStorage.setItem('aliments_ods12', JSON.stringify(aliments));
+}
+function carregarDades() {
+  const d = localStorage.getItem('aliments_ods12');
+  return d ? JSON.parse(d) : [];
+}
+
+// ── AFEGIR ──
+function afegirAliment() {
+  const nom = document.getElementById('nom').value.trim();
+  const data = document.getElementById('data').value;
+  const errDiv = document.getElementById('error-msg');
+
+  if (!nom || !data) {
+    errDiv.textContent = '⚠️ Cal introduir el nom i la data de caducitat.';
+    errDiv.style.display = 'block';
+    return;
+  }
+  errDiv.style.display = 'none';
+
+  const aliments = carregarDades();
+  aliments.push({ id: Date.now(), nom, data, emoji: getEmoji(nom) });
+  aliments.sort((a, b) => new Date(a.data) - new Date(b.data));
+  guardarDades(aliments);
+
+  document.getElementById('nom').value = '';
+  document.getElementById('data').value = '';
+  renderLlista();
+}
+
+// ── ELIMINAR ──
+function eliminarAliment(id) {
+  const aliments = carregarDades().filter(a => a.id !== id);
+  guardarDades(aliments);
+  renderLlista();
+}
+
+function netejarCaducats() {
+  const aliments = carregarDades().filter(a => calcularDies(a.data) >= 0);
+  guardarDades(aliments);
+  renderLlista();
+}
+
+// ── RENDER ──
+function renderLlista() {
+  const aliments = carregarDades();
+  const statsEl = document.getElementById('stats');
+  const llistaEl = document.getElementById('llista');
+
+  // Stats
+  const ok     = aliments.filter(a => calcularDies(a.data) > 7).length;
+  const avis   = aliments.filter(a => { const d = calcularDies(a.data); return d >= 0 && d <= 7; }).length;
+  const critic = aliments.filter(a => { const d = calcularDies(a.data); return d >= 0 && d <= 3; }).length;
+  const caducat= aliments.filter(a => calcularDies(a.data) < 0).length;
+
+  statsEl.innerHTML = [
+    { num: aliments.length, label: 'Total',    color: '#1a3a2a' },
+    { num: ok,              label: 'En bon estat', color: '#22c55e' },
+    { num: avis,            label: 'Avís',     color: '#f59e0b' },
+    { num: caducat,         label: 'Caducats', color: '#9ca3af' },
+  ].map(s => `<div class="stat-card">
+    <div class="stat-num" style="color:${s.color}">${s.num}</div>
+    <div class="stat-label">${s.label}</div>
+  </div>`).join('');
+
+  // Llista
+  if (!aliments.length) {
+    llistaEl.innerHTML = `<div class="empty-state">
+      <div class="icon">🛒</div>
+      <h3>Cap aliment afegit encara</h3>
+      <p>Introdueix el primer aliment per començar a controlar les caducitats.</p>
+    </div>`;
+    return;
+  }
+
+  llistaEl.innerHTML = aliments.map(a => {
+    const dies = calcularDies(a.data);
+    const estat = obtenirEstat(dies);
+    const dataFmt = new Date(a.data + 'T00:00:00').toLocaleDateString('ca-ES', { day:'numeric', month:'long', year:'numeric' });
+    return `<div class="aliment-item ${estat.classe}">
+      <span class="a-emoji">${a.emoji}</span>
+      <div class="a-info">
+        <div class="a-nom">${a.nom}</div>
+        <div class="a-data">Caduca el ${dataFmt}</div>
+      </div>
+      <span class="a-badge">${estat.emoji} ${estat.text}</span>
+      <button class="a-delete" onclick="eliminarAliment(${a.id})" title="Eliminar">🗑️</button>
+    </div>`;
+  }).join('');
+}
+
+// Enter per afegir
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') afegirAliment();
+});
+
+// Posar data mínima d'avui
+document.getElementById('data').min = new Date().toISOString().split('T')[0];
+
+// INIT
+renderLlista();
+</script>
+</body>
+</html>
